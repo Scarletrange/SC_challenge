@@ -1,0 +1,437 @@
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+/**
+ *
+ * @author Matt
+ */
+public class ReadSpecificLine {
+ public ArrayList<Integer> data=new ArrayList<>(); 
+   public ArrayList<String> names=new ArrayList<>();
+   public ArrayList<Integer> Loops=new ArrayList<>();
+   public int loopCount=0; 
+    
+    public static void main(String[] args) {
+        int lineCount=0;
+        ReadSpecificLine BBI=new ReadSpecificLine();
+        Scanner input = new Scanner(System.in);
+        try{
+            Stream<String> all_lines1 = Files.lines(Paths.get("C:\\Users\\Matt\\southampton\\BareCode.txt"));
+            List<String> all_lines=all_lines1.collect(Collectors.toList());
+            String line;
+            String[] parts; 
+            int size=all_lines.size();
+            while(lineCount<size){
+                line = all_lines.get(lineCount);
+                parts=line.split(" ");
+                String[] variable = parts[1].split(";");
+                int comment=99;
+                for (int i = 0; i < parts.length; i++) {
+                    if(parts[i].contains("//")){
+                        comment=i;
+                        break;
+                    }
+                    
+                }
+                if(comment!=0){
+                    
+                    if(parts[0].contains("clear")){
+                        BBI.clear(variable[0]);
+                        
+                    }
+                    if(parts[0].contains("add")){
+                        BBI.add(variable[0]);
+                    }
+                    if(parts[0].contains("min")){
+                        BBI.min(variable[0]);
+                    }
+                    if(parts[0].contains("mul")){
+                        BBI.mul(variable[0]);
+                    }
+                    if(parts[0].contains("div")){
+                        BBI.div(variable[0]);
+                    }
+                    if(parts[0].contains("incr")){
+                        BBI.incr(variable[0]);
+                    }
+                    if(parts[0].contains("decr")){
+                        BBI.decr(variable[0]);
+                    }
+                    if(parts[0].contains("while")){
+
+
+                        
+                        lineCount=BBI.loop(variable[0],all_lines,BBI, lineCount+1);
+                        
+                    }
+                    if(parts[0].contains("if")){
+                        
+                        if(variable[0].contains("==")){
+                            int numb1=BBI.getNumber(variable[0].split("==")[0]);
+                            int numb2=BBI.getNumber(variable[0].split("==")[1]);
+                            if(numb1==numb2){
+                                lineCount=BBI.iff(all_lines,BBI, lineCount+1);
+                            }
+                            else{
+                                while(line.contains("}")==false){
+                                    line = all_lines.get(lineCount);
+                                    lineCount++;
+                                }
+                            }
+                        }
+                        else if(variable[0].contains("<=")){
+                            int numb1=BBI.getNumber(variable[0].split("<=")[0]);
+                            int numb2=BBI.getNumber(variable[0].split("<=")[1]);
+                            if(numb1<=numb2){
+                                 lineCount=BBI.iff(all_lines,BBI, lineCount+1);
+                            }
+                            else{
+                                while(line.contains("}")==false){
+                                    line = all_lines.get(lineCount);
+                                    lineCount++;
+                                }
+                            }
+                        }
+                        else if(variable[0].contains(">=")){
+                            int numb1=BBI.getNumber(variable[0].split(">=")[0]);
+                            int numb2=BBI.getNumber(variable[0].split(">=")[1]);
+                            if(numb1>=numb2){
+                                 lineCount=BBI.iff(all_lines,BBI, lineCount+1);
+                            }
+                            else{
+                                while(line.contains("}")==false){
+                                    line = all_lines.get(lineCount);
+                                    lineCount++;
+                                }
+                            }
+                        }
+                        else if(variable[0].contains("<")){
+                            int numb1=BBI.getNumber(variable[0].split("<")[0]);
+                            int numb2=BBI.getNumber(variable[0].split("<")[1]);
+                            if(numb1<numb2){
+                                lineCount=BBI.iff(all_lines,BBI, lineCount+1);
+                            }
+                            else{
+                                while(line.contains("}")==false){
+                                    line = all_lines.get(lineCount);
+                                    lineCount++;
+                                }
+                            }
+                        }
+                        else if(variable[0].contains(">")){
+                            int numb1=BBI.getNumber(variable[0].split(">")[0]);
+                            int numb2=BBI.getNumber(variable[0].split(">")[1]);
+                            if(numb1>numb2){
+                                lineCount=BBI.iff(all_lines,BBI, lineCount+1);
+                            }
+                            else{
+                                while(line.contains("}")==false){
+                                    line = all_lines.get(lineCount);
+                                    lineCount++;
+                                }
+                            }
+                        }
+                        
+                        
+                    }
+                }
+             lineCount++;
+            }
+            BBI.read();
+        }catch(Exception e ){
+            System.out.println(e);
+        }
+    }
+    public int getNumber(String var){
+       return data.get(names.indexOf(var));
+    }
+    public int iff(List<String> all_lines,ReadSpecificLine BBI,int lineCount){
+        
+        String[] parts;
+        try{
+            String line;
+            line = all_lines.get(lineCount);
+            while(line.contains("}")==false){
+                line = all_lines.get(lineCount);
+                line=line.split(";")[0];
+                line=line.split("//")[0];
+                 parts=line.split(" ");
+                 
+                int comment=9999;
+                for (int i = 0; i < parts.length; i++) {
+                    if(parts[i].contains("//")){
+                        comment=i;
+                        break;
+                    }
+                    
+                }
+                
+                if(parts[0].contains("add")){
+                    BBI.add(parts[parts.length-1]);
+                }
+                if(parts[0].contains("min")){
+                    BBI.min(parts[parts.length-1]);
+                }
+                if(parts[0].contains("mul")){
+                    BBI.mul(parts[parts.length-1]);
+                }
+                if(parts[0].contains("div")){
+                    BBI.div(parts[parts.length-1]);
+                }
+                if(line.contains("clear")){
+                    
+                    BBI.clear(parts[parts.length-1]);
+                }
+                if(line.contains("incr")){
+                    
+                    BBI.incr(parts[parts.length-1]);
+                }
+                if(line.contains("decr")){
+                    BBI.decr(parts[parts.length-1]);
+                }
+                if(parts[0].contains("while")){
+
+
+
+                    lineCount=BBI.loop(parts[parts.length-4],all_lines,BBI, lineCount+1);
+                }
+                
+             lineCount++;   
+            }
+            
+        }catch(Exception e ){
+            System.out.println(e);
+        }
+        
+        return lineCount;
+    }
+    public void read(){
+        
+        for (int i = 0; i < data.size(); i++) {
+            System.out.print(names.get(i));
+            System.out.println(data.get(i));
+            
+        }
+    }
+    public int numb(String var){
+        return data.get(names.indexOf(var));
+    }
+    
+    public void clear(String var){
+        int index=names.indexOf(var);
+        
+        if(index<0){
+            names.add(var);
+            data.add(0);
+        }
+        else{
+            data.set(index, 0);
+            
+        }
+        
+    }
+    public int get(String var){
+        return names.indexOf(var);
+    }
+    public void add(String var){
+        int index1=names.indexOf(var.split(",")[0]);
+        int index2=names.indexOf(var.split(",")[1]);
+        data.set(index1, (data.get(index1)+data.get(index2)));
+    }
+    public void min(String var){
+        int index1=names.indexOf(var.split(",")[0]);
+        int index2=names.indexOf(var.split(",")[1]);
+        data.set(index1, (data.get(index1)-data.get(index2)));
+    }
+    public void mul(String var){
+        int index1=names.indexOf(var.split(",")[0]);
+        int index2=names.indexOf(var.split(",")[1]);
+        data.set(index1, (data.get(index1)*data.get(index2)));
+    }
+    public void div(String var){
+        int index1=names.indexOf(var.split(",")[0]);
+        int index2=names.indexOf(var.split(",")[1]);
+        data.set(index1, (data.get(index1)/data.get(index2)));
+    }
+    public void incr(String var){
+        int index=names.indexOf(var);
+        data.set(index, (data.get(index)+1));
+    }
+    public void decr(String var){
+        int index=names.indexOf(var);
+        data.set(index, (data.get(index)-1));
+        
+    }
+    public int loop(String var,List<String> all_lines,ReadSpecificLine BBI,int lineCount){
+        if(loopCount==0){
+            Loops.add(lineCount);
+        }
+
+        lineCount=Loops.get(loopCount);
+
+        String[] parts;
+        
+        try{
+            String line;
+            
+            while((line = all_lines.get(lineCount)) != null){
+                if(loopCount<0){
+                    break;
+                }
+                line=line.split(";")[0];
+                line=line.split("//")[0];
+                 parts=line.split(" ");
+                 
+                int comment=9999;
+                for (int i = 0; i < parts.length; i++) {
+                    if(parts[i].contains("//")){
+                        comment=i;
+                        break;
+                    }
+                    
+                }
+                
+                if(parts[0].contains("add")){
+                    BBI.add(parts[parts.length-1]);
+                }
+                if(parts[0].contains("min")){
+                    BBI.min(parts[parts.length-1]);
+                }
+                if(parts[0].contains("mul")){
+                    BBI.mul(parts[parts.length-1]);
+                }
+                if(parts[0].contains("div")){
+                    BBI.div(parts[parts.length-1]);
+                }
+                if(line.contains("clear")){
+                    
+                    BBI.clear(parts[parts.length-1]);
+                }
+                if(line.contains("incr")){
+                    
+                    BBI.incr(parts[parts.length-1]);
+                }
+                if(line.contains("decr")){
+                    BBI.decr(parts[parts.length-1]);
+                }
+                if(line.contains("while")){
+                    if((BBI.numb(var))!=0){
+                        loopCount++;
+                        Loops.add(lineCount);
+                        Loops.set(loopCount, lineCount+1);
+                        lineCount=BBI.loop(parts[parts.length-4],all_lines,BBI,lineCount+1);
+
+                    }
+                    else{
+                        while(line.contains("end")==false){//find the part with while in to find correct end
+                            lineCount++;
+                            line = all_lines.get(lineCount);
+                        }
+                    }
+                }
+                if(line.contains("end")){
+                    if((data.get(names.indexOf(var)))!=0){
+                        
+                        BBI.loop(var, all_lines,BBI,lineCount);
+                        break;
+                    }
+                    else{
+                        
+                        loopCount--;
+                        if(loopCount<0){
+                            Loops.set(0, lineCount);
+                        }
+                        Loops.set(loopCount+1, lineCount);
+                        break;
+                        
+                        
+                        
+                    }
+                }
+                if(parts[0].contains("if")){
+                        if(parts[parts.length-1].contains("==")){
+                            int numb1=BBI.getNumber(parts[parts.length-1].split("==")[0]);
+                            int numb2=BBI.getNumber(parts[parts.length-1].split("==")[1]);
+                            if(numb1==numb2){
+                                lineCount=BBI.iff(all_lines,BBI, lineCount+1);
+                            }
+                            else{
+                                while(line.contains("}")==false){
+                                    line = all_lines.get(lineCount);
+                                    lineCount++;
+                                }
+                            }
+                        }
+                        if(parts[parts.length-1].contains("<")){
+                            int numb1=BBI.getNumber(parts[parts.length-1].split("<")[0]);
+                            int numb2=BBI.getNumber(parts[parts.length-1].split("<")[1]);
+                            if(numb1<numb2){
+                                lineCount=BBI.iff(all_lines,BBI, lineCount+1);
+                            }
+                            else{
+                                while(line.contains("}")==false){
+                                    line = all_lines.get(lineCount);
+                                    lineCount++;
+                                }
+                            }
+                        }
+                        if(parts[parts.length-1].contains(">")){
+                            int numb1=BBI.getNumber(parts[parts.length-1].split(">")[0]);
+                            int numb2=BBI.getNumber(parts[parts.length-1].split(">")[1]);
+                            if(numb1>numb2){
+                                lineCount=BBI.iff(all_lines,BBI, lineCount+1);
+                            }
+                            else{
+                                while(line.contains("}")==false){
+                                    line = all_lines.get(lineCount);
+                                    lineCount++;
+                                }
+                            }
+                        }
+                        if(parts[parts.length-1].contains("<=")){
+                            int numb1=BBI.getNumber(parts[parts.length-1].split("<=")[0]);
+                            int numb2=BBI.getNumber(parts[parts.length-1].split("<=")[1]);
+                            if(numb1<=numb2){
+                                 lineCount=BBI.iff(all_lines,BBI, lineCount+1);
+                            }
+                            else{
+                                while(line.contains("}")==false){
+                                    line = all_lines.get(lineCount);
+                                    lineCount++;
+                                }
+                            }
+                        }
+                        if(parts[parts.length-1].contains(">=")){
+                            int numb1=BBI.getNumber(parts[parts.length-1].split(">=")[0]);
+                            int numb2=BBI.getNumber(parts[parts.length-1].split(">=")[1]);
+                            if(numb1>=numb2){
+                                 lineCount=BBI.iff(all_lines,BBI, lineCount+1);
+                            }
+                            else{
+                                while(line.contains("}")==false){
+                                    line = all_lines.get(lineCount);
+                                    lineCount++;
+                                }
+                            }
+                        }
+                    }
+                
+             lineCount++;   
+            }
+            
+        }catch(Exception e ){
+            System.out.println(e);
+        }
+        return Loops.get(loopCount+1);
+        
+    }
+    
+}
